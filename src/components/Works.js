@@ -14,10 +14,14 @@ const Works = () => {
 					viewport={{ once: true }}
 					transition={{ duration: 0.6 }}
 					className="heading">
-					<p className="heading-sub-text">
-						Built from my skills, experience, and real business results
+					<p className="heading-sub-text">Selected work</p>
+					<p className="heading-text">
+						Live products I have <span className="gradient-text">designed, built and shipped</span>
 					</p>
-					<p className="heading-text">Works</p>
+					<p className="heading-lead">
+						E-commerce, Web3, SaaS, AI and HealthTech platforms built with my full stack and
+						mobile skills, each one in production and used by real customers today.
+					</p>
 				</motion.div>
 
 				<div className="works-showcase">

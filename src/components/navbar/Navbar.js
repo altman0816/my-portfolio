@@ -1,156 +1,85 @@
 import { AnimatePresence, motion } from "framer-motion";
-import { BiBookContent, BiEnvelope, BiBriefcase } from "react-icons/bi";
+import { BiBookContent, BiEnvelope, BiBriefcase, BiServer } from "react-icons/bi";
 import { FaHome, FaLaptop } from "react-icons/fa";
 import { FiUser } from "react-icons/fi";
 import { Link } from "react-scroll";
 import "../../styles/Navbar.css";
 import NavLinks from "./NavLinks";
 
+const NAV_ITEMS = [
+	{ to: "home", label: "Home", icon: <FaHome className="mid-icon" /> },
+	{ to: "about", label: "About", icon: <FiUser className="mid-icon" /> },
+	{ to: "services", label: "Services", icon: <BiServer className="mid-icon" /> },
+	{ to: "skills", label: "Skills", icon: <FaLaptop className="mid-icon" /> },
+	{ to: "experience", label: "Experience", icon: <BiBriefcase className="mid-icon" /> },
+	{ to: "works", label: "Works", icon: <BiBookContent className="mid-icon" /> },
+	{ to: "contact", label: "Contact", icon: <BiEnvelope className="mid-icon" /> },
+];
+
 const navVariants = {
 	hidden: {
 		opacity: 0,
-		transition: {
-			delay: 0.5,
-			staggerChildren: 0.2,
-			staggerDirection: -1,
-		},
+		transition: { delay: 0.5, staggerChildren: 0.2, staggerDirection: -1 },
 	},
 	visible: {
 		opacity: 1,
-		transition: {
-			duration: 0.5,
-			staggerChildren: 0.2,
-			staggerDirection: 1,
-		},
+		transition: { duration: 0.5, staggerChildren: 0.2, staggerDirection: 1 },
 	},
 };
 
 const Navbar = ({ nav, handleNav }) => {
+	const year = new Date().getFullYear();
+
 	return (
 		<AnimatePresence>
 			<motion.nav
 				initial={{ width: "0" }}
-				animate={
-					nav ? { width: "300px" } : { width: "0", transition: { delay: 1 } }
-				}
+				animate={nav ? { width: "300px" } : { width: "0", transition: { delay: 1 } }}
 				className={nav ? "navbar active" : "navbar"}>
 				<motion.div
-					initial='hidden'
+					initial="hidden"
 					whileInView={nav ? "visible" : "hidden"}
 					variants={navVariants}
-					exit='hidden'
-					className='navbar-container'>
-					<div className='top-details'>
+					exit="hidden"
+					className="navbar-container">
+					<div className="top-details">
+						<span className="profile-avatar" aria-hidden="true">
+							SH
+						</span>
 						<Link
-							activeClass='active'
+							activeClass="active"
 							spy={true}
 							smooth={true}
 							offset={0}
 							duration={500}
 							onClick={handleNav}
-							to='home'
-							className='profile-name'>
+							to="home"
+							className="profile-name">
 							Sato Haruto
 						</Link>
+						<span className="profile-role">Senior Full Stack Web &amp; Mobile Dev · AI Engineer</span>
 						<NavLinks handleNav={handleNav} />
 					</div>
-					<ul className='mid-details'>
-						<Link
-							activeClass='active'
-							spy={true}
-							smooth={true}
-							offset={0}
-							duration={500}
-							to='home'
-							className='mid-links'>
-							<FaHome className='mid-icon' />
-							<li className='mid-link' onClick={handleNav}>
-								Home
-							</li>
-						</Link>
-						<Link
-							activeClass='active'
-							spy={true}
-							smooth={true}
-							offset={0}
-							duration={500}
-							to='about'
-							className='mid-links'>
-							<FiUser className='mid-icon' />
-							<li className='mid-link' onClick={handleNav}>
-								About
-							</li>
-						</Link>
-						<Link
-							activeClass='active'
-							spy={true}
-							smooth={true}
-							offset={0}
-							duration={500}
-							to='skills'
-							className='mid-links'>
-							<FaLaptop className='mid-icon' />
-							<li className='mid-link' onClick={handleNav}>
-								Skills
-							</li>
-						</Link>
-						<Link
-							activeClass='active'
-							spy={true}
-							smooth={true}
-							offset={0}
-							duration={500}
-							to='experience'
-							className='mid-links'>
-							<BiBriefcase className='mid-icon' />
-							<li className='mid-link' onClick={handleNav}>
-								Experience
-							</li>
-						</Link>
-						{/* <Link
-							activeClass='active'
-							spy={true}
-							smooth={true}
-							offset={0}
-							duration={500}
-							to='services'
-							className='mid-links'>
-							<BiServer className='mid-icon' />
-							<li className='mid-link' onClick={handleNav}>
-								Services
-							</li>
-						</Link> */}
-						<Link
-							activeClass='active'
-							spy={true}
-							smooth={true}
-							offset={0}
-							duration={500}
-							to='works'
-							className='mid-links'>
-							<BiBookContent className='mid-icon' />
-							<li className='mid-link' onClick={handleNav}>
-								Works
-							</li>
-						</Link>
-						<Link
-							activeClass='active'
-							spy={true}
-							smooth={true}
-							offset={0}
-							duration={500}
-							to='contact'
-							className='mid-links'>
-							<BiEnvelope className='mid-icon' />
-							<li className='mid-link' onClick={handleNav}>
-								Contact
-							</li>
-						</Link>
+					<ul className="mid-details">
+						{NAV_ITEMS.map((item) => (
+							<Link
+								key={item.to}
+								activeClass="active"
+								spy={true}
+								smooth={true}
+								offset={0}
+								duration={500}
+								to={item.to}
+								className="mid-links">
+								{item.icon}
+								<li className="mid-link" onClick={handleNav}>
+									{item.label}
+								</li>
+							</Link>
+						))}
 					</ul>
-					<div className='copy'>
-						<small className='copyright'>
-							© Copyright ©2022 | All rights reserved
-						</small>
+					<div className="copy">
+						<small className="copyright">© {year} Sato Haruto. All rights reserved.</small>
 					</div>
 				</motion.div>
 			</motion.nav>

@@ -1,114 +1,233 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "../styles/HeroSection.css";
 import { FaBars, FaTimes } from "react-icons/fa";
 import { AiOutlineArrowUp } from "react-icons/ai";
-import { animateScroll as scroll } from "react-scroll";
+import { HiOutlineArrowDown, HiOutlineArrowRight, HiOutlineSparkles } from "react-icons/hi2";
+import { animateScroll as scroll, Link } from "react-scroll";
 import { motion } from "framer-motion";
-// import CV from "../data/Peace Jinadu-Paul Resume.pdf";
-// import { HiOutlineDocumentText } from "react-icons/hi";
+
+const ROTATING_ROLES = [
+	"React & Next.js web platforms",
+	"React Native & Flutter mobile apps",
+	"Node.js / NestJS backend architecture",
+	"LLM-powered features, RAG & AI agents",
+	"Cloud-native delivery on AWS",
+	"E-commerce & SaaS products",
+];
+
+const TECH_STRIP = [
+	"React",
+	"Next.js",
+	"TypeScript",
+	"Node.js",
+	"NestJS",
+	"React Native",
+	"Flutter",
+	"PostgreSQL",
+	"MongoDB",
+	"AWS",
+	"Docker",
+	"OpenAI API",
+	"Anthropic Claude",
+	"LangChain",
+	"RAG / Vector DBs",
+	"Python",
+	"Redis",
+	"Tailwind CSS",
+	"Django",
+];
+
+const STATS = [
+	{ value: "6+", label: "Years of experience" },
+	{ value: "3", label: "Platforms: Web · iOS · Android" },
+	{ value: "7+", label: "Live products shipped" },
+	{ value: "AI", label: "LLM features, RAG & agents in production" },
+];
+
+const useTypewriter = (words, typingSpeed = 60, deletingSpeed = 32, pause = 1700) => {
+	const [index, setIndex] = useState(0);
+	const [text, setText] = useState("");
+	const [deleting, setDeleting] = useState(false);
+
+	useEffect(() => {
+		const current = words[index % words.length];
+		let timeout;
+
+		if (!deleting && text === current) {
+			timeout = setTimeout(() => setDeleting(true), pause);
+		} else if (deleting && text === "") {
+			setDeleting(false);
+			setIndex((i) => (i + 1) % words.length);
+		} else {
+			timeout = setTimeout(
+				() => setText(current.slice(0, text.length + (deleting ? -1 : 1))),
+				deleting ? deletingSpeed : typingSpeed
+			);
+		}
+
+		return () => clearTimeout(timeout);
+	}, [text, deleting, index, words, typingSpeed, deletingSpeed, pause]);
+
+	return text;
+};
 
 const HeroSection = ({ nav, handleNav }) => {
-	const scrollToTop = () => {
-		scroll.scrollToTop({ smooth: "linear" });
-	};
-
 	const [visible, setVisible] = useState(false);
+	const typed = useTypewriter(ROTATING_ROLES);
 
-	const toggleVisible = () => {
-		const scrolled = document.documentElement.scrollTop;
-		if (scrolled > 300) {
-			setVisible(true);
-		} else if (scrolled <= 300) {
-			setVisible(false);
-		}
+	useEffect(() => {
+		const toggleVisible = () => {
+			setVisible(document.documentElement.scrollTop > 300);
+		};
+		window.addEventListener("scroll", toggleVisible, { passive: true });
+		return () => window.removeEventListener("scroll", toggleVisible);
+	}, []);
+
+	const scrollToTop = () => scroll.scrollToTop({ smooth: "easeInOutQuad", duration: 600 });
+
+	const container = {
+		hidden: { opacity: 0 },
+		visible: {
+			opacity: 1,
+			transition: { staggerChildren: 0.14, delayChildren: 0.2 },
+		},
 	};
 
-	window.addEventListener("scroll", toggleVisible);
-
-	const heroVariants = {
-		hidden: {
-			opacity: 0,
-			y: "-50%",
-		},
+	const item = {
+		hidden: { opacity: 0, y: 28 },
 		visible: {
 			opacity: 1,
 			y: 0,
-			transition: {
-				duration: 1.4,
-			},
+			transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] },
 		},
 	};
 
-	// const contactVariants = {
-	// 	hidden: {
-	// 		opacity: 0,
-	// 		x: "-50%",
-	// 	},
-	// 	visible: {
-	// 		opacity: 1,
-	// 		x: 0,
-	// 		transition: {
-	// 			duration: 1.4,
-	// 		},
-	// 	},
-	// };
-
 	const menuVariants = {
-		hidden: {
-			opacity: 0,
-		},
+		hidden: { opacity: 0, scale: 0.6 },
 		visible: {
 			opacity: 1,
-			scale: [1, 1.2, 1.5, 1.2, 1],
-			rotate: [0, 0, 360, 360, 360],
-			borderRadius: ["50%", "50%", "50%", "50%", "50%"],
-			transition: {
-				duration: 1,
-			},
+			scale: 1,
+			transition: { duration: 0.6, delay: 0.4 },
 		},
 	};
 
 	return (
-		<div className='hero-section' name='home' id='home'>
-			<div className='hero-overlay'></div>
-			<motion.div
-				// viewport={{ once: true }}
+		<header className="hero-section" id="home">
+			<div className="hero-bg" aria-hidden="true">
+				<div className="hero-overlay" />
+				<div className="hero-grid" />
+				<span className="hero-orb hero-orb-1" />
+				<span className="hero-orb hero-orb-2" />
+				<span className="hero-orb hero-orb-3" />
+			</div>
+
+			<motion.button
+				type="button"
+				aria-label={nav ? "Close navigation" : "Open navigation"}
 				variants={menuVariants}
-				initial='hidden'
-				whileInView='visible'
+				initial="hidden"
+				animate="visible"
 				onClick={handleNav}
-				className='menu-icon'>
+				className="menu-icon">
 				{nav ? <FaTimes /> : <FaBars />}
-			</motion.div>
-			<motion.div
-				variants={heroVariants}
-				initial='hidden'
-				whileInView='visible'
+			</motion.button>
+
+			<button
+				type="button"
+				aria-label="Back to top"
 				className={visible ? "to-top-icon show" : "to-top-icon hide"}
 				onClick={scrollToTop}>
 				<AiOutlineArrowUp />
-			</motion.div>
+			</button>
+
 			<motion.div
-				variants={heroVariants}
-				initial='hidden'
-				whileInView='visible'
-				className='hero-content'>
-				<p className='hero-intro'>
-					<span>Hi, </span> <span>I am Sato </span>
-				</p>
-				<p className='hero-desc'>
-					I'm a <span className='hero-desc-sub'>Senior Full Stack Developer.</span>
-				</p>
+				variants={container}
+				initial="hidden"
+				animate="visible"
+				className="hero-content">
+				<motion.div variants={item} className="hero-badge">
+					<span className="hero-badge-dot" />
+					Available for senior roles &amp; freelance projects
+				</motion.div>
+
+				<motion.p variants={item} className="hero-greeting">
+					Hi, I&apos;m <span className="hero-name">Sato Haruto</span>
+				</motion.p>
+
+				<motion.h1 variants={item} className="hero-title">
+					Senior Full Stack
+					<span className="hero-title-line">
+						<span className="gradient-text">Web &amp; Mobile</span> Developer
+					</span>
+					<span className="hero-title-ai">
+						<HiOutlineSparkles aria-hidden="true" /> &amp; AI Engineer
+					</span>
+				</motion.h1>
+
+				<motion.p variants={item} className="hero-typed" aria-live="polite">
+					<span className="hero-typed-label">Specialising in</span>
+					<span className="hero-typed-text">
+						{typed}
+						<span className="hero-cursor" aria-hidden="true" />
+					</span>
+				</motion.p>
+
+				<motion.p variants={item} className="hero-desc">
+					Six-plus years designing, building and leading production software end to
+					end: pixel-perfect React and Next.js interfaces, native-feeling React Native
+					and Flutter apps, scalable Node.js / NestJS APIs, and AI features powered by
+					large language models, RAG pipelines and autonomous agents. Based in Tokyo,
+					working with teams worldwide.
+				</motion.p>
+
+				<motion.div variants={item} className="hero-actions">
+					<Link
+						to="works"
+						smooth={true}
+						duration={600}
+						offset={-10}
+						href="#works"
+						className="btn btn-primary">
+						View my work <HiOutlineArrowRight />
+					</Link>
+					<Link
+						to="contact"
+						smooth={true}
+						duration={700}
+						href="#contact"
+						className="btn btn-ghost">
+						Hire me
+					</Link>
+				</motion.div>
+
+				<motion.ul variants={item} className="hero-stats">
+					{STATS.map((s) => (
+						<li key={s.label}>
+							<strong>{s.value}</strong>
+							<span>{s.label}</span>
+						</li>
+					))}
+				</motion.ul>
 			</motion.div>
-			{/* <motion.span
-				variants={contactVariants}
-				initial='hidden'
-				whileInView='visible'>
-				<a href={CV} target='_blank' rel='noreferrer' className='hero-contact'>
-					View My Resume <HiOutlineDocumentText className='cv-icon' />
-				</a>
-			</motion.span> */}
-		</div>
+
+			<div className="hero-marquee" aria-hidden="true">
+				<div className="hero-marquee-track">
+					{[...TECH_STRIP, ...TECH_STRIP].map((t, i) => (
+						<span key={`${t}-${i}`}>{t}</span>
+					))}
+				</div>
+			</div>
+
+			<Link
+				to="about"
+				smooth={true}
+				duration={600}
+				href="#about"
+				className="hero-scroll-hint"
+				aria-label="Scroll to about section">
+				<HiOutlineArrowDown />
+			</Link>
+		</header>
 	);
 };
 
